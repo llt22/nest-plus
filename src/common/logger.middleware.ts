@@ -2,7 +2,6 @@ import { httpLogger } from './http.logger';
 
 export function loggerMiddleware(req, res, next) {
   const now = Date.now();
-  next();
 
   const send = res.send;
 
@@ -10,10 +9,18 @@ export function loggerMiddleware(req, res, next) {
     statusCode: res.statusCode,
     method: req.method,
     originalUrl: req.originalUrl,
-    cost: Date.now() - now,
+    cost: 0,
     contentType: req.headers['content-type'],
     reqBody: req.body,
     resBody: undefined,
+  };
+
+  res.send = function (string) {
+    console.log('loggerMiddleware');
+    const body = string instanceof Buffer ? string.toString() : string;
+    message.resBody = body;
+    message.cost = Date.now() - now;
+    send.call(this, body);
   };
 
   res.on('close', () => {
@@ -32,9 +39,5 @@ export function loggerMiddleware(req, res, next) {
     }
   });
 
-  res.send = function (string) {
-    const body = string instanceof Buffer ? string.toString() : string;
-    message.resBody = body;
-    send.call(this, body);
-  };
+  next();
 }
