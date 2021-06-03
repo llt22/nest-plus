@@ -16,7 +16,6 @@ export function loggerMiddleware(req, res, next) {
   };
 
   res.send = function (string) {
-    console.log('loggerMiddleware');
     const body = string instanceof Buffer ? string.toString() : string;
     message.resBody = body;
     message.cost = Date.now() - now;
