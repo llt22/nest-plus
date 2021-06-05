@@ -4,7 +4,7 @@ export function loggerMiddleware(req, res, next) {
   const now = Date.now();
 
   const send = res.send;
-
+  // todo: 从配置读取不写入日志的字段，从 reqBody 删除
   const message = {
     statusCode: res.statusCode,
     method: req.method,
@@ -23,6 +23,7 @@ export function loggerMiddleware(req, res, next) {
   };
 
   res.on('close', () => {
+    // todo: 从配置读取不写入日志的 url 路径，不写入日志
     const { statusCode } = res;
     message.statusCode = statusCode;
 
@@ -34,7 +35,7 @@ export function loggerMiddleware(req, res, next) {
     }
 
     if (statusCode >= 500) {
-      // 未知错误由从 全局异常处理输出 log
+      httpLogger.error(message);
     }
   });
 

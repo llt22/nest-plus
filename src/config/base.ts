@@ -7,6 +7,8 @@ interface IJwt {
 }
 
 export class BaseConfig {
+  port = 4000;
+
   jwt: IJwt = {
     secret: 'w234dsfetwer',
     expiresIn: 60 * 60 * 10,

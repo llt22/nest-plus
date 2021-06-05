@@ -1,6 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { httpLogger } from './http.logger';
 import * as dayjs from 'dayjs';
 
 type TExceptionResponse = {
@@ -22,18 +21,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse() as TExceptionResponse;
       message = exceptionResponse.message;
-    } else {
-      const logMessage = {
-        statusCode: status,
-        method: request.method,
-        originalUrl: request.originalUrl,
-        cost: 0,
-        contentType: request.headers['content-type'],
-        reqBody: request.body,
-        resBody: exception.stack,
-        errStack: true,
-      };
-      httpLogger.error(logMessage);
     }
 
     response.status(status).json({
